@@ -78,10 +78,9 @@ void imprimeArvore(TnoBin *A, int hash[]){
 
     int l = A->linha;
     fseek(ptr,hash[l],SEEK_SET);
-    printf("[%d]-%d\n\n",l, hash[l]);
     fscanf(ptr," %[^\n]", string);
-    // fprintf(ptr2,"%s\n", string);
     printf("%s\n\n", string);
+    
     if (A->direita != NULL)
         imprimeArvore(A->direita, hash);
     
@@ -99,24 +98,21 @@ int main(){
             {
                 if(fscanf(ptr," %[^\n]", string) == EOF){break;}
                 contador++;
-                //printf("%d\n",contaChar(string));
+
             }
         fseek(ptr,0, SEEK_SET);
-        //fscanf(ptr," %[^\n]", string);
-        //fprintf(ptr2,"%s\n", string);
-        //printf("%s\n\n", string);
         
         int hash[contador - 1];
 
-        printf("1. Carregar Dados da árvore\n");
+        printf("\n1. Carregar Dados da árvore\n");
         printf("2. Gerar relatório\n");
         printf("3. Sair\n");
         int linha = 0;
     
     do
     {
+        printf("Digite a opção: ");
         scanf("%d", &continuar);
-        system("clear");
         switch (continuar)
         {
         case 1:
@@ -154,18 +150,19 @@ int main(){
                 }
                 linha++;
             }
-            printf("Feito!\n");
+            printf("\nFeito!\n");
             break;
 
         case 2:
             if (arvore == NULL)
-                printf("Arquivo vazio!!!\n");
+                printf("\nArquivo vazio!!!\n");
             else{
                 imprimeArvore(arvore, hash);
-                printf("Feito!\n");}
+                printf("\nFeito!\n");}
             break;
         
         case 3:
+            //liberaArvore(arvore);
             break;
         
         default:
