@@ -68,6 +68,25 @@ void retiraAspas(char * a){
     a[i] = '\0';
 }
 
+void imprimeArvore(TnoBin *A, int hash[]){
+    FILE * ptr = fopen("amostra.csv","r");
+    FILE * ptr2 = fopen("resultado.csv","w+");
+    char string[1000];
+
+    if (A->esquerda != NULL)
+        imprimeArvore(A->esquerda, hash);
+
+    int l = A->linha;
+    fseek(ptr,hash[l],SEEK_SET);
+    printf("[%d]-%d\n\n",l, hash[l]);
+    fscanf(ptr," %[^\n]", string);
+    // fprintf(ptr2,"%s\n", string);
+    printf("%s\n\n", string);
+    if (A->direita != NULL)
+        imprimeArvore(A->direita, hash);
+    
+}
+
 int main(){
     FILE * ptr = fopen("amostra.csv","r");
     TnoBin *arvore = NULL;
@@ -75,32 +94,24 @@ int main(){
     int contador = 0;
     char string[1000];
     char key[50];
-    char claim_uid[12],cord_uid[12],title[200],doi[100],numerical_claims[250],publish_time[12],authors[150],journal[100],country[50],institution[100];
-    // while(fscanf(ptr,"%[^\n]", string) != EOF)
-    // {
-    //     // printf("Digite o texto do nó: ");
-    //     // scanf(" %[^\n]", valorNo);
-    //     // toLower(valorNo);
-    //     // if(i == 0)
-    //     //     arvore = criaArvore(arvore, valorNo);
-    //     // else
-    //     //     criaNo(arvore, valorNo);
-    //     contador++;
-    // }
+    char claim_uid[20],cord_uid[20],title[2000],doi[100],numerical_claims[2000],publish_time[20],authors[2000],journal[500],country[50],institution[300];
     while (1)
             {
                 if(fscanf(ptr," %[^\n]", string) == EOF){break;}
                 contador++;
+                //printf("%d\n",contaChar(string));
             }
         fseek(ptr,0, SEEK_SET);
+        //fscanf(ptr," %[^\n]", string);
+        //fprintf(ptr2,"%s\n", string);
+        //printf("%s\n\n", string);
         
-        int hash[contador];
+        int hash[contador - 1];
 
         printf("1. Carregar Dados da árvore\n");
         printf("2. Gerar relatório\n");
         printf("3. Sair\n");
         int linha = 0;
-        hash[0] = 114;
     
     do
     {
@@ -114,7 +125,7 @@ int main(){
                 int tamanho;
                 if(fscanf(ptr," %[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]", claim_uid,cord_uid,title,doi,numerical_claims,publish_time,authors,journal,country,institution) == EOF){break;}
                 
-                if(linha != 0){
+                if(linha + 1 != contador){
                     int n1 = contaChar(claim_uid); 
                     int n2 = contaChar(cord_uid); 
                     int n3 = contaChar(title); 
@@ -126,20 +137,32 @@ int main(){
                     int n9 = contaChar(country);
                     int n10 = contaChar(institution);
                     tamanho = n1+n2+n3+n4+n5+n6+n7+n8+n9+n10+9;
-                    hash[linha] = tamanho + 1 + hash[linha - 1];
-                    retiraAspas(country);
-                    strcat(country, publish_time);
-                    strcpy(key,country);
-                    if(linha == 1)
-                        arvore = criaArvore(arvore, key, linha);
+                    if(linha == 0)
+                        hash[linha] = tamanho;
                     else
-                        criaNo(arvore, key, linha);
+                        hash[linha] = tamanho + 1 + hash[linha - 1];
+                    
+                    
+                        retiraAspas(country);
+                        strcat(country, publish_time);
+                        strcpy(key,country);
+                        if(linha == 0)
+                            arvore = criaArvore(arvore, key, linha);
+                        else
+                            criaNo(arvore, key, linha);
+                        
                 }
                 linha++;
             }
+            printf("Feito!\n");
             break;
 
         case 2:
+            if (arvore == NULL)
+                printf("Arquivo vazio!!!\n");
+            else{
+                imprimeArvore(arvore, hash);
+                printf("Feito!\n");}
             break;
         
         case 3:
